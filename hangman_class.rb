@@ -1,3 +1,5 @@
+require 'json'
+
 class Game
 
 	def initialize
@@ -9,6 +11,35 @@ class Game
 		@used_letters = []
 		@picture = [' ', ' ', ' ', ' ']
 		#puts @picture.inspect
+	end
+
+	def save_game
+		save_file = File.open("saved_game.json", "w")
+		save_file.puts JSON.dump({
+			:used_guesses => @used_guesses,
+			:word => @word,
+			:letter_array => @letter_array,
+			:used_letters => @used_letters,
+			:picture => @picture
+			})
+		puts "Game Saved"
+		exit
+	end
+
+	def load_game
+		load_file = File.open("saved_game.json", "r")
+		#puts load_file.read
+		load_hash = JSON.parse(load_file.read)
+		#puts load_hash.inspect
+		@used_guesses = load_hash["used_guesses"]
+		@word = load_hash["word"]
+		#puts @word.inspect
+		@letter_array = load_hash["letter_array"]
+		#puts @letter_array.inspect
+		@used_letters = load_hash["used_letters"]
+		@picture = load_hash["picture"]
+		puts "Game loaded"
+		#play_from_save
 	end
 
 	def get_word
@@ -36,7 +67,8 @@ class Game
 		if @guess == "save"
 			save_game
 		elsif @word.join == @guess
-			puts "EXACTLY RIGHT"
+			#may need work
+			return
 		elsif @word.include?(@guess)
 			good_guess
 		else
@@ -46,22 +78,32 @@ class Game
 		puts "You have #{@max_guesses-@used_guesses} guesses remaining."
 	end
 
-	def save_game
-		puts "Game Saved"
-		exit
-	end
-
-	def load_game
-		puts "Game loaded"
-	end
-
 	def valid_input?
 		return true if @guess == "save" || (!@used_letters.include?(@guess) && (@guess.length == @word.length || @guess.length == 1))
 		false
 	end
 
-	def hangman
+	def good_guess
+		#update letter array
+		@word.each_with_index do |letter, index| 
+			if letter == @guess
+				@letter_array[index] = letter+" "
+			end
+		end
+		@used_letters << @guess
+		#puts @letter_array.join
+	end
 
+	def bad_guess
+		puts "Your guess was wrong!"
+		@used_guesses +=1
+		if @guess.length == 1
+			@used_letters << @guess
+		end
+		hangman
+	end
+
+	def hangman
 		case @used_guesses
 		when 1
 			@picture[3] << "|  "
@@ -91,30 +133,10 @@ class Game
 		puts "______________"
 	end
 
-	def bad_guess
-		puts "Your guess was wrong!"
-		@used_guesses +=1
-		if @guess.length == 1
-			@used_letters << @guess
-		end
-		hangman
-	end
-
-	def good_guess
-		#update letter array
-		@word.each_with_index do |letter, index| 
-			if letter == @guess
-				@letter_array[index] = letter+" "
-			end
-		end
-		@used_letters << @guess
-		#puts @letter_array.join
-	end
-
-
 	def game_over?
 		if @letter_array.include?("_ ")==false || @word.join == @guess
 			puts "You WON!"
+			puts "The word was '#{@word.join}'"
 			return true
 		elsif @max_guesses-@used_guesses == 0
 			puts "You LOST..."
@@ -126,12 +148,20 @@ class Game
 	end
 
 
-	def play
-		puts "Let's play hangman! Type 'save' at any time to save your game."
-		get_word
+	def play (status)
+		if status == "load"
+			load_game
+			puts "Let's continue!"
+			hangman
+			puts "You've alreaady used the following letters: #{@used_letters.sort.uniq.join.upcase}"
+			puts "You have #{@max_guesses-@used_guesses} guesses remaining."
+		else
+			get_word
+			puts "Let's play hangman! Type 'save' at any time to save your game."
+		end
+
 		until game_over? ==true
 			guess
-			#hangman
 		end
 	end
 
