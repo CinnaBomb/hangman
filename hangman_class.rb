@@ -34,6 +34,14 @@ class Game
 		end
 	end
 
+	def hangman
+		line1 = "|----, "
+		line2 = "|    O "
+		line3 = "|   /|\\"
+		line4 = "|   ./\\"
+		puts line1, line2, line3, line4
+	end
+
 	def bad_guess
 		@used_guesses +=1
 		@used_letters << @guess
@@ -74,5 +82,5 @@ class Game
 
 end
 
-game = Game.new.play
-
+game = Game.new
+game.hangman
