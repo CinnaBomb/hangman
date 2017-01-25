@@ -36,7 +36,7 @@ class Game
 		if @guess == "save"
 			save_game
 		elsif @word.join == @guess
-			return
+			puts "EXACTLY RIGHT"
 		elsif @word.include?(@guess)
 			good_guess
 		else
@@ -92,8 +92,11 @@ class Game
 	end
 
 	def bad_guess
+		puts "Your guess was wrong!"
 		@used_guesses +=1
-		@used_letters << @guess
+		if @guess.length == 1
+			@used_letters << @guess
+		end
 		hangman
 	end
 
