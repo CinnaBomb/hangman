@@ -6,6 +6,8 @@ class Game
 		@guess = ""
 		@letter_array = []
 		@used_letters = []
+		@picture = [' ', ' ', ' ', ' ']
+		puts @picture.inspect
 	end
 
 	def get_word
@@ -20,9 +22,14 @@ class Game
 	end
 
 	def guess
+		puts @letter_array.join
 		@guess = ""
-		until @guess.length == @word.length || @guess.length == 1
-			puts "You can guess one letter at a time or the entire word."
+		until !@used_letters.include?(@guess) && (@guess.length == @word.length || @guess.length == 1) 
+			if @used_letters.include?(@guess)
+				puts "You've already guessed that letter!"
+			else
+				puts "You can guess one letter at a time or the entire word."
+			end
 			@guess = gets.chomp!
 		end
 		if @word.join == @guess
@@ -32,39 +39,65 @@ class Game
 		else
 			bad_guess
 		end
+		puts "You've alreaady used the following letters: #{@used_letters.sort.uniq.join.upcase}"
+		puts "You have #{@max_guesses-@used_guesses} guesses remaining."
 	end
 
 	def hangman
-		line1 = "|----, "
-		line2 = "|    O "
-		line3 = "|   /|\\"
-		line4 = "|   ./\\"
-		puts line1, line2, line3, line4
+
+		case @used_guesses
+		when 1
+			@picture[3] << "|  "
+		when 2
+			@picture[2] << "| "
+		when 3
+			@picture[1] << "|  "
+		when 4,5
+			@picture[0] << " -"
+		when 6
+			@picture[0] << ","
+		when 7
+			@picture[1] << "O"
+		when 8
+			@picture[2] << "/"
+		when 9
+			@picture[2] << "|"
+		when 10
+			@picture[2] << "\\"
+		when 11
+			@picture[3] << "/"
+		when 12 
+			@picture[3] << "\\"
+		end
+		puts "______________"
+		puts "#{@picture[0]}\n#{@picture[1]}\n#{@picture[2]}\n#{@picture[3]}"
+		puts "______________"
 	end
 
 	def bad_guess
 		@used_guesses +=1
 		@used_letters << @guess
+		hangman
 	end
 
 	def good_guess
+		#update letter array
 		@word.each_with_index do |letter, index| 
 			if letter == @guess
 				@letter_array[index] = letter+" "
 			end
 		end
 		@used_letters << @guess
-		puts @letter_array.join
+		#puts @letter_array.join
 	end
 
 
 	def game_over?
-		puts @used_guesses
 		if @letter_array.include?("_ ")==false || @word.join == @guess
 			puts "You WON!"
 			return true
 		elsif @max_guesses-@used_guesses == 0
-			puts "You LOST"
+			puts "You LOST..."
 			puts "The word was '#{@word.join}'"
 			return true
 		else
@@ -77,10 +110,10 @@ class Game
 		get_word
 		until game_over? ==true
 			guess
+			#hangman
 		end
 	end
 
 end
 
-game = Game.new
-game.hangman
+game = Game.new.play
