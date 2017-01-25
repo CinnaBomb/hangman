@@ -10,7 +10,6 @@ class Game
 		@letter_array = []
 		@used_letters = []
 		@picture = [' ', ' ', ' ', ' ']
-		#puts @picture.inspect
 	end
 
 	def save_game
@@ -28,18 +27,15 @@ class Game
 
 	def load_game
 		load_file = File.open("saved_game.json", "r")
-		#puts load_file.read
 		load_hash = JSON.parse(load_file.read)
-		#puts load_hash.inspect
+
 		@used_guesses = load_hash["used_guesses"]
 		@word = load_hash["word"]
-		#puts @word.inspect
 		@letter_array = load_hash["letter_array"]
-		#puts @letter_array.inspect
 		@used_letters = load_hash["used_letters"]
 		@picture = load_hash["picture"]
+
 		puts "Game loaded"
-		#play_from_save
 	end
 
 	def get_word
@@ -48,9 +44,9 @@ class Game
 		hangman_words = words.select{|word| word.length >= 5 && word.length <= 12}
 		hangman_words.collect!{|word| word.downcase}
 		@word = hangman_words.sample.split("")
-		puts @word.inspect
+		#FOR TESTING
+		#puts @word.inspect
 		@letter_array = Array.new(@word.length, "_ ")
-		#puts @letter_array.inspect
 	end
 
 	def guess
@@ -67,7 +63,6 @@ class Game
 		if @guess == "save"
 			save_game
 		elsif @word.join == @guess
-			#may need work
 			return
 		elsif @word.include?(@guess)
 			good_guess
@@ -135,11 +130,15 @@ class Game
 
 	def game_over?
 		if @letter_array.include?("_ ")==false || @word.join == @guess
-			puts "You WON!"
+			puts "__________"
+			puts "|You WON!|"
+			puts "__________"
 			puts "The word was '#{@word.join}'"
 			return true
 		elsif @max_guesses-@used_guesses == 0
-			puts "You LOST..."
+			puts "_____________"
+			puts "|You LOST...|"
+			puts "_____________"
 			puts "The word was '#{@word.join}'"
 			return true
 		else
