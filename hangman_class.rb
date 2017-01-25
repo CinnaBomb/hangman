@@ -1,4 +1,5 @@
 class Game
+
 	def initialize
 		@max_guesses = 12
 		@used_guesses = 0
@@ -7,7 +8,7 @@ class Game
 		@letter_array = []
 		@used_letters = []
 		@picture = [' ', ' ', ' ', ' ']
-		puts @picture.inspect
+		#puts @picture.inspect
 	end
 
 	def get_word
@@ -16,7 +17,7 @@ class Game
 		hangman_words = words.select{|word| word.length >= 5 && word.length <= 12}
 		hangman_words.collect!{|word| word.downcase}
 		@word = hangman_words.sample.split("")
-		puts "wordarray" + @word.inspect
+		puts @word.inspect
 		@letter_array = Array.new(@word.length, "_ ")
 		#puts @letter_array.inspect
 	end
@@ -24,15 +25,16 @@ class Game
 	def guess
 		puts @letter_array.join
 		@guess = ""
-		until !@used_letters.include?(@guess) && (@guess.length == @word.length || @guess.length == 1) 
-			if @used_letters.include?(@guess)
+		until valid_input? == true
 				puts "You've already guessed that letter!"
 			else
 				puts "You can guess one letter at a time or the entire word."
 			end
 			@guess = gets.chomp!
 		end
-		if @word.join == @guess
+		if @guess == "save"
+			save_game
+		elsif @word.join == @guess
 			return
 		elsif @word.include?(@guess)
 			good_guess
@@ -41,6 +43,15 @@ class Game
 		end
 		puts "You've alreaady used the following letters: #{@used_letters.sort.uniq.join.upcase}"
 		puts "You have #{@max_guesses-@used_guesses} guesses remaining."
+	end
+
+	def save_game
+
+	end
+
+	def valid_input?
+		return true if !@used_letters.include?(@guess) && (@guess.length == @word.length || @guess.length == 1) 
+			if @used_letters.include?(@guess)
 	end
 
 	def hangman
@@ -107,6 +118,7 @@ class Game
 
 
 	def play
+		puts "Let's play hangman! Type 'save' at any time to save your game."
 		get_word
 		until game_over? ==true
 			guess
@@ -116,4 +128,4 @@ class Game
 
 end
 
-game = Game.new.play
+
