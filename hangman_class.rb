@@ -26,6 +26,7 @@ class Game
 		puts @letter_array.join
 		@guess = ""
 		until valid_input? == true
+			if @used_letters.include?(@guess)
 				puts "You've already guessed that letter!"
 			else
 				puts "You can guess one letter at a time or the entire word."
@@ -46,12 +47,17 @@ class Game
 	end
 
 	def save_game
+		puts "Game Saved"
+		exit
+	end
 
+	def load_game
+		puts "Game loaded"
 	end
 
 	def valid_input?
-		return true if !@used_letters.include?(@guess) && (@guess.length == @word.length || @guess.length == 1) 
-			if @used_letters.include?(@guess)
+		return true if @guess == "save" || (!@used_letters.include?(@guess) && (@guess.length == @word.length || @guess.length == 1))
+		false
 	end
 
 	def hangman
