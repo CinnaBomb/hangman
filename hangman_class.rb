@@ -29,7 +29,7 @@ class Game
 		if File.exists?("saved_game.txt") && !File.zero?("saved_game.txt")
 			load_file = File.open("saved_game.txt", "r")
 			load_hash = JSON.parse(load_file.read)
-
+			#load saved values
 			@used_guesses = load_hash["used_guesses"]
 			@word = load_hash["word"]
 			@letter_array = load_hash["letter_array"]
@@ -45,6 +45,7 @@ class Game
 
 	def get_word
 		words = File.read("5desk.txt")
+		#other environments may not read \r in the dictionary text file.
 		words = words.split("\r\n")
 		hangman_words = words.select{|word| word.length >= 5 && word.length <= 12}
 		hangman_words.collect!{|word| word.downcase}
@@ -57,6 +58,7 @@ class Game
 	def guess
 		puts @letter_array.join
 		@guess = ""
+
 		until valid_input? == true
 			if @used_letters.include?(@guess)
 				puts "You've already guessed that letter!"
@@ -65,6 +67,7 @@ class Game
 			end
 			@guess = gets.chomp!
 		end
+
 		if @guess == "save"
 			save_game
 		elsif @word.join == @guess
@@ -74,6 +77,7 @@ class Game
 		else
 			bad_guess
 		end
+
 		puts "You've alreaady used the following letters: #{@used_letters.sort.uniq.join.upcase}"
 		puts "You have #{@max_guesses-@used_guesses} guesses remaining."
 	end
@@ -84,14 +88,12 @@ class Game
 	end
 
 	def good_guess
-		#update letter array
 		@word.each_with_index do |letter, index| 
 			if letter == @guess
 				@letter_array[index] = letter+" "
 			end
 		end
 		@used_letters << @guess
-		#puts @letter_array.join
 	end
 
 	def bad_guess
@@ -104,6 +106,7 @@ class Game
 	end
 
 	def hangman
+		#incrementally add hangman ascii elements to array
 		case @used_guesses
 		when 1
 			@picture[3] << "|  "
@@ -155,6 +158,7 @@ class Game
 	def play (status)
 		if status == "load" 
 			if load_game == true
+				#orient players from the get-go
 				puts "Let's continue!"
 				hangman
 				puts "You've alreaady used the following letters: #{@used_letters.sort.uniq.join.upcase}"
@@ -164,6 +168,7 @@ class Game
 				return
 			end
 		else
+			#start a new game
 			get_word
 			puts "Let's play hangman! Type 'save' at any time to save your game."
 		end
