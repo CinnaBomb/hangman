@@ -3,7 +3,7 @@ require 'json'
 class Game
 
 	def initialize
-		@max_guesses = 12
+		@max_guesses = 8
 		@used_guesses = 0
 		@word = ""
 		@guess = ""
@@ -13,7 +13,7 @@ class Game
 	end
 
 	def save_game
-		save_file = File.open("saved_game.json", "w")
+		save_file = File.open("saved_game.txt", "w")
 		save_file.puts JSON.dump({
 			:used_guesses => @used_guesses,
 			:word => @word,
@@ -26,16 +26,21 @@ class Game
 	end
 
 	def load_game
-		load_file = File.open("saved_game.json", "r")
-		load_hash = JSON.parse(load_file.read)
+		if File.exists?("saved_game.txt") && !File.zero?("saved_game.txt")
+			load_file = File.open("saved_game.txt", "r")
+			load_hash = JSON.parse(load_file.read)
 
-		@used_guesses = load_hash["used_guesses"]
-		@word = load_hash["word"]
-		@letter_array = load_hash["letter_array"]
-		@used_letters = load_hash["used_letters"]
-		@picture = load_hash["picture"]
+			@used_guesses = load_hash["used_guesses"]
+			@word = load_hash["word"]
+			@letter_array = load_hash["letter_array"]
+			@used_letters = load_hash["used_letters"]
+			@picture = load_hash["picture"]
 
-		puts "Game loaded"
+			puts "Game loaded"
+		else
+			return false
+		end
+		true
 	end
 
 	def get_word
@@ -113,13 +118,13 @@ class Game
 		when 7
 			@picture[1] << "O"
 		when 8
-			@picture[2] << "/"
+			@picture[2] << "\/"
 		when 9
 			@picture[2] << "|"
 		when 10
 			@picture[2] << "\\"
 		when 11
-			@picture[3] << "/"
+			@picture[3] << "\/"
 		when 12 
 			@picture[3] << "\\"
 		end
@@ -148,12 +153,16 @@ class Game
 
 
 	def play (status)
-		if status == "load"
-			load_game
-			puts "Let's continue!"
-			hangman
-			puts "You've alreaady used the following letters: #{@used_letters.sort.uniq.join.upcase}"
-			puts "You have #{@max_guesses-@used_guesses} guesses remaining."
+		if status == "load" 
+			if load_game == true
+				puts "Let's continue!"
+				hangman
+				puts "You've alreaady used the following letters: #{@used_letters.sort.uniq.join.upcase}"
+				puts "You have #{@max_guesses-@used_guesses} guesses remaining."
+			else
+				puts "There are no saved games."
+				return
+			end
 		else
 			get_word
 			puts "Let's play hangman! Type 'save' at any time to save your game."

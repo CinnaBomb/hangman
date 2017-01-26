@@ -1,0 +1,1 @@
+{"used_guesses":0,"word":["p","e","r","c","e","i","v","a","b","l","e"],"letter_array":["_ ","e ","r ","_ ","e ","_ ","_ ","a ","_ ","_ ","e "],"used_letters":["a","r","e"],"picture":[" "," "," "," "]}
