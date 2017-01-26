@@ -21,6 +21,7 @@ class Game
 			:used_letters => @used_letters,
 			:picture => @picture
 			})
+		save_file.close
 		puts "Game Saved"
 		exit
 	end
@@ -29,6 +30,7 @@ class Game
 		if File.exists?("saved_game.txt") && !File.zero?("saved_game.txt")
 			load_file = File.open("saved_game.txt", "r")
 			load_hash = JSON.parse(load_file.read)
+			load_file.close
 			#load saved values
 			@used_guesses = load_hash["used_guesses"]
 			@word = load_hash["word"]
@@ -44,15 +46,20 @@ class Game
 	end
 
 	def get_word
-		words = File.read("5desk.txt")
-		#other environments may not read \r in the dictionary text file.
-		words = words.split("\r\n")
-		hangman_words = words.select{|word| word.length >= 5 && word.length <= 12}
-		hangman_words.collect!{|word| word.downcase}
-		@word = hangman_words.sample.split("")
-		#FOR TESTING
-		#puts @word.inspect
-		@letter_array = Array.new(@word.length, "_ ")
+		if File.exists?("5desk.txt") && !File.zero?("5desk.txt")
+			words = File.read("5desk.txt")
+			#other environments may not read \r in the dictionary text file.
+			words = words.split("\r\n")
+			hangman_words = words.select{|word| word.length >= 5 && word.length <= 12}
+			hangman_words.collect!{|word| word.downcase}
+			@word = hangman_words.sample.split("")
+			#FOR TESTING
+			#puts @word.inspect
+			@letter_array = Array.new(@word.length, "_ ")
+		else
+			puts "Error: There is no dictionary file!"
+			exit
+		end
 	end
 
 	def guess
