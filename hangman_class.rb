@@ -9,7 +9,7 @@ class Game
 		@guess = ""
 		@letter_array = []
 		@used_letters = []
-		@picture = [' ', ' ', ' ', ' ']
+		@picture = [' ', ' |  ', ' | ', ' |  ']
 	end
 
 	def save_game
@@ -114,28 +114,21 @@ class Game
 
 	def hangman
 		#incrementally add hangman ascii elements to array
+		#may need to add escapes on "/" characters in other IDEs
 		case @used_guesses
-		when 1
-			@picture[3] << "|  "
-		when 2
-			@picture[2] << "| "
-		when 3
-			@picture[1] << "|  "
-		when 4,5
+		when 1,2
 			@picture[0] << " -"
-		when 6
-			@picture[0] << ","
-		when 7
+		when 3
 			@picture[1] << "O"
-		when 8
-			@picture[2] << "\/"
-		when 9
+		when 4
+			@picture[2] << "/"
+		when 5
 			@picture[2] << "|"
-		when 10
+		when 6
 			@picture[2] << "\\"
-		when 11
-			@picture[3] << "\/"
-		when 12 
+		when 7
+			@picture[3] << "/"
+		when 8 
 			@picture[3] << "\\"
 		end
 		puts "______________"

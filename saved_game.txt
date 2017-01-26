@@ -1,1 +1,1 @@
-{"used_guesses":0,"word":["p","e","r","c","e","i","v","a","b","l","e"],"letter_array":["_ ","e ","r ","_ ","e ","_ ","_ ","a ","_ ","_ ","e "],"used_letters":["a","r","e"],"picture":[" "," "," "," "]}
+{"used_guesses":3,"word":["g","o","n","a","d","o","t","r","o","p","i","c"],"letter_array":["_ ","o ","_ ","a ","_ ","o ","_ ","_ ","o ","_ ","i ","_ "],"used_letters":["a","e","i","o","u","b"],"picture":[" --"," |  O"," | "," |  "]}
